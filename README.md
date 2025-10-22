@@ -9,3 +9,9 @@ Drew Labrador
 
 - To run:
 npm run dev
+
+- Downloads needed:
+- brew install node
+- make install
+- make dev
+- npm install

@@ -1,0 +1,12 @@
+{
+  "privacy": false,
+  "budgets": {
+    "Groceries": { "limit": 400, "spent": 280 },
+    "Dining": { "limit": 150, "spent": 135 },
+    "Utilities": { "limit": 120, "spent": 90 },
+    "Transport": { "limit": 100, "spent": 60 },
+    "Fun Money": { "limit": 80, "spent": 45 }
+  },
+  "savings": { "goal": 5000, "saved": 3000 },
+  "lastSync": "2025-10-15T13:00:00Z"
+}

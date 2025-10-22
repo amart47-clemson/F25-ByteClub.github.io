@@ -5,3 +5,7 @@ Xander Facey
 Zach Wooten
 Ross Nebitt
 Drew Labrador
+
+
+- To run:
+npm run dev

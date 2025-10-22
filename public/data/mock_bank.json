@@ -1,0 +1,7 @@
+[
+  { "id": 1, "category": "Dining", "amount": 22.5, "date": "2025-10-10", "merchant": "Thai Place" },
+  { "id": 2, "category": "Groceries", "amount": 78.3, "date": "2025-10-11", "merchant": "Publix" },
+  { "id": 3, "category": "Utilities", "amount": 45.0, "date": "2025-10-05", "merchant": "City Power" },
+  { "id": 4, "category": "Transport", "amount": 18.2, "date": "2025-10-09", "merchant": "Uber" },
+  { "id": 5, "category": "Fun Money", "amount": 25.0, "date": "2025-10-08", "merchant": "Indie Games" }
+]

@@ -5,7 +5,7 @@ import { AppContext } from '../App.jsx'
 export default function CategoryDetail() {
   const { name } = useParams()          // e.g. "Groceries"
   const navigate = useNavigate()
-  const { state } = useContext(AppContext) || {}
+  const { state, setState } = useContext(AppContext) || {}
 
   // safety guards in case state is undefined for some reason
   const budgets = state?.budgets || {}
@@ -27,7 +27,7 @@ export default function CategoryDetail() {
         <div className="card" style={{ maxWidth: 600 }}>
           <button
             className="btn"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/frame')}
             style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
           >
             ← Back to Dashboard
@@ -97,6 +97,34 @@ export default function CategoryDetail() {
               ${spent.toFixed(0)} / ${limit.toFixed(0)}
             </span>
           </div>
+
+          <div style={{ marginTop: 8 }}>
+    <label style={{ fontSize: 13, color: 'var(--muted)' }}>
+      Adjust Weekly Limit:
+    </label>
+    <input
+      type="number"
+      value={limit}
+      min="0"
+      onChange={(e) => {
+        const newLimit = Number(e.target.value)
+        setState(prev => ({
+          ...prev,
+          budgets: {
+            ...prev.budgets,
+            [name]: { ...prev.budgets[name], limit: newLimit }
+          }
+        }))
+      }}
+      style={{
+        marginLeft: 8,
+        padding: '4px 8px',
+        borderRadius: 6,
+        border: '1px solid var(--border)',
+        width: 100,
+      }}
+    />
+  </div>
 
           <div className="progress" style={{ height: 10 }}>
             <div

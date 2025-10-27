@@ -45,7 +45,7 @@ export default function Dashboard() {
               key={name}
               className="card"
               style={{ marginBottom: 12, cursor: 'pointer' }}
-              onClick={() => navigate(`/category/${encodeURIComponent(name)}`)}
+              onClick={() => navigate(`/frame/category/${encodeURIComponent(name)}`)}
             >
               <div className="kpi">
                 <strong>{name}</strong>

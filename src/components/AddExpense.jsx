@@ -1,79 +1,232 @@
 import React, { useContext, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../App.jsx'
 
-const categories = ["Groceries","Dining","Utilities","Transport","Fun Money","Other"]
-
-export default function AddExpense(){
+export default function AddExpense() {
+  const navigate = useNavigate()
   const { state, setState } = useContext(AppContext)
-  const [display, setDisplay] = useState("0.00")
-  const [category, setCategory] = useState(categories[0])
 
-  const press = (v) => {
-    if (v === '⌫') {
-      setDisplay(d => d.length <= 1 ? "0" : d.slice(0,-1))
-    } else if (v === '.') {
-      setDisplay(d => d.includes('.') ? d : d + '.')
-    } else {
-      setDisplay(d => (d === "0.00" || d === "0") ? String(v) : d + String(v))
+  // form fields
+  const [amount, setAmount] = useState('')
+  const [category, setCategory] = useState('Groceries')
+  const [description, setDescription] = useState('') 
+  const [date, setDate] = useState(() => {
+    const d = new Date()
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+  })
+
+  // add expense handler
+  function handleSubmit(e) {
+    e.preventDefault()
+
+    const amtNum = parseFloat(amount)
+    if (isNaN(amtNum) || amtNum <= 0) {
+      alert('Please enter a valid amount.')
+      return
     }
-  }
 
-  const save = () => {
-    const amt = parseFloat(display)
-    if (isNaN(amt) || amt <= 0) return
-    const tx = {
-      id: Date.now(),
+    // build new transaction object
+    const newTxn = {
+      id: Date.now(), 
       category,
-      amount: amt,
-      date: new Date().toISOString().slice(0,10),
-      merchant: "Manual Entry"
+      amount: amtNum,
+      date,
+      merchant: description || 'Unlabeled Purchase', 
     }
+
+    // update transactions array
+    const nextTransactions = [newTxn, ...(state.transactions || [])]
+
+    // also update budget "spent" for that category
+    const nextBudgets = { ...state.budgets }
+    if (nextBudgets[category]) {
+      nextBudgets[category] = {
+        ...nextBudgets[category],
+        spent: nextBudgets[category].spent + amtNum,
+      }
+    }
+
     setState(prev => ({
       ...prev,
-      transactions: [...(prev.transactions||[]), tx],
-      budgets: {
-        ...prev.budgets,
-        [category]: {
-          ...prev.budgets[category],
-          spent: (prev.budgets[category]?.spent || 0) + amt,
-          limit: prev.budgets[category]?.limit || 100
-        }
-      }
+      transactions: nextTransactions,
+      budgets: nextBudgets,
+      lastSync: Date.now(),
     }))
-    setDisplay("0.00")
+
+    // reset form
+    setAmount('')
+    setDescription('')
+    navigate('/')
   }
 
-  const layout = [
-    ["1","2","3"],
-    ["4","5","6"],
-    ["7","8","9"],
-    [".","0","⌫"]
-  ]
-
   return (
-    <div className="grid">
-      <div className="card" style={{gridColumn:'span 6'}}>
-        <h2 className="h">Add Expense</h2>
-        <div className="card" style={{textAlign:'center', marginBottom:12}}>
-          <div style={{fontSize:32, fontWeight:700}}>${display}</div>
+    <div className="container" style={{ paddingTop: 24, maxWidth: 480 }}>
+      <div className="card" style={{ border: '1px solid var(--border)' }}>
+        <button
+          className="btn"
+          style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
+          onClick={() => navigate('/')}
+        >
+          ← Back to Dashboard
+        </button>
+
+        <h2 className="h" style={{ marginBottom: 8 }}>
+          Add Expense
+        </h2>
+        <div style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 20 }}>
+          Log something you (or a roommate / family member) just spent. This updates the shared budget.
         </div>
-        <div className="keypad">
-          {layout.flat().map((k,i) => (
-            <button className="keypad-btn" key={i} onClick={() => press(k)}>{k}</button>
-          ))}
-        </div>
-      </div>
-      <div className="card" style={{gridColumn:'span 6'}}>
-        <h3 className="h">Category</h3>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:8}}>
-          {categories.map(c => (
-            <button key={c} className="btn" style={{borderColor: c===category ? '#111' : ''}} onClick={() => setCategory(c)}>
-              {c}
-            </button>
-          ))}
-        </div>
-        <div style={{marginTop:16}}>
-          <button className="btn" onClick={save}>Save Expense</button>
+
+        <form onSubmit={handleSubmit} style={{ fontSize: 14, color: 'var(--text)' }}>
+          {/* Amount */}
+          <div style={{ marginBottom: 16 }}>
+            <label
+              style={{
+                display: 'block',
+                fontWeight: 600,
+                marginBottom: 6,
+              }}
+            >
+              Amount ($)
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--border)',
+                background: '#fff',
+                fontSize: 14,
+              }}
+              placeholder="e.g. 42.50"
+            />
+          </div>
+
+          {/* Category */}
+          <div style={{ marginBottom: 16 }}>
+            <label
+              style={{
+                display: 'block',
+                fontWeight: 600,
+                marginBottom: 6,
+              }}
+            >
+              Category
+            </label>
+            <select
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--border)',
+                background: '#fff',
+                fontSize: 14,
+              }}
+            >
+              {Object.keys(state.budgets).map(cat => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Description / Merchant (NEW FIELD) */}
+          <div style={{ marginBottom: 16 }}>
+            <label
+              style={{
+                display: 'block',
+                fontWeight: 600,
+                marginBottom: 6,
+              }}
+            >
+              Description / Where was this?
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="ex: Publix groceries, Uber to airport, dinner at Thai Place"
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--border)',
+                background: '#fff',
+                fontSize: 14,
+              }}
+            />
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
+              This will show up in your category view under “Recent Activity”.
+            </div>
+          </div>
+
+          {/* Date */}
+          <div style={{ marginBottom: 20 }}>
+            <label
+              style={{
+                display: 'block',
+                fontWeight: 600,
+                marginBottom: 6,
+              }}
+            >
+              Date
+            </label>
+            <input
+              type="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: '1px solid var(--border)',
+                background: '#fff',
+                fontSize: 14,
+              }}
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="btn"
+            style={{
+              width: '100%',
+              background: 'var(--accent)',
+              color: '#fff',
+              fontWeight: 600,
+              border: 'none',
+              borderRadius: 8,
+              padding: '12px 16px',
+              fontSize: 15,
+              cursor: 'pointer',
+            }}
+          >
+            Add to Budget
+          </button>
+        </form>
+
+        <div
+          className="footer"
+          style={{
+            marginTop: 16,
+            fontSize: 12,
+            color: 'var(--muted)',
+          }}
+        >
+          This simulates a “manual log.” In the real system, most expenses would auto-import from the bank.
         </div>
       </div>
     </div>

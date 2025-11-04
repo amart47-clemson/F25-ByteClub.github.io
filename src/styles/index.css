@@ -94,10 +94,25 @@ body {
   overflow: hidden;
   border: 1px solid var(--border);
 }
+
+/* progress fill */
+.progress .bar {
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+/* color states driven  */
+.progress.ok .bar    { background: #16a34a; } /* green */
+.progress.warn .bar  { background: #f59e0b; } /* yellow */
+.progress.danger .bar{ background: #dc2626; } /* red */
+
+/*
 .progress > div {
   height: 100%;
   background: var(--accent);
 }
+*/
 
 /* status badges */
 .badge {
@@ -603,21 +618,20 @@ body {
 }
 
 .spend-bar-inner.ok {
-  background-color: #1f2937; 
+  background-color: #22c55e; 
 }
 
 .spend-bar-inner.warn {
-  background-color: #9a3412; 
+  background-color: #facc15; 
 }
 
 .spend-bar-inner.danger {
-  background-color: #7f1d1d; 
+  background-color: #dc2626; 
 }
 
 .spend-bar-label {
-  font-size: 11px;
+  text-align: right;
+  font-size: 12px;
   color: var(--muted);
-  font-weight: 500;
-  display: flex;
-  justify-content: flex-end;
+  margin-top: 4px;
 }

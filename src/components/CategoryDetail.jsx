@@ -2,32 +2,35 @@ import React, { useContext, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { AppContext } from '../App.jsx'
 
+// map % used -> status class for colored bars
+function statusClass(pct) {
+  if (pct > 90) return 'danger'  // red
+  if (pct >= 75) return 'warn'    // yellow
+  return 'ok'                     // green
+}
+
 export default function CategoryDetail() {
-  const { name } = useParams()          // e.g. "Groceries"
+  const { name } = useParams()
   const navigate = useNavigate()
   const { state, setState } = useContext(AppContext) || {}
 
-  // safety guards in case state is undefined for some reason
   const budgets = state?.budgets || {}
   const txns = state?.transactions || []
 
-  // get this category's budget data
   const categoryBudget = budgets[name]
 
-  // get recent transactions for this category
   const relatedTxns = useMemo(() => {
     if (!Array.isArray(txns)) return []
     return txns.filter(txn => txn.category === name)
   }, [txns, name])
 
-  // if this category doesn't exist, show a friendly error instead of crashing
   if (!categoryBudget) {
     return (
-      <div className="container" style={{ paddingTop: '24px' }}>
+      <div className="container" style={{ paddingTop: 24 }}>
         <div className="card" style={{ maxWidth: 600 }}>
           <button
             className="btn"
-            onClick={() => navigate('/frame')}
+            onClick={() => navigate('/')}
             style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
           >
             ← Back to Dashboard
@@ -45,21 +48,15 @@ export default function CategoryDetail() {
     )
   }
 
-  // compute progress info
   const spent = categoryBudget.spent ?? 0
   const limit = categoryBudget.limit ?? 0
-  const pct = limit === 0 ? 0 : Math.min(100, Math.round((spent / limit) * 100))
+  const pctRaw = limit === 0 ? 0 : (spent / limit) * 100
+  const pct = Math.min(100, Math.round(pctRaw))
   const remaining = limit - spent
-
-  const statusColor =
-    pct >= 100
-      ? 'var(--danger)'
-      : pct >= 90
-      ? 'var(--warn)'
-      : 'var(--ok)'
+  const barClass = statusClass(pctRaw)
 
   return (
-    <div className="container" style={{ paddingTop: '24px' }}>
+    <div className="container" style={{ paddingTop: 24 }}>
       <div className="card" style={{ maxWidth: 800, marginBottom: 24 }}>
         <button
           className="btn"
@@ -72,67 +69,54 @@ export default function CategoryDetail() {
         <h2 className="h" style={{ marginBottom: 4 }}>
           {name} Overview
         </h2>
-        <div
-          style={{
-            fontSize: 14,
-            color: 'var(--muted)',
-            marginBottom: 16,
-          }}
-        >
-          This shows how {name} is performing against its budget this week,
-          plus your recent activity.
+        <div style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 16 }}>
+          This shows how {name} is performing against its budget this week, plus your recent activity.
         </div>
 
         {/* Budget Summary Card */}
-        <div
-          className="card"
-          style={{
-            border: '1px solid var(--border)',
-            marginBottom: 16,
-          }}
-        >
+        <div className="card" style={{ border: '1px solid var(--border)', marginBottom: 16 }}>
           <div className="kpi" style={{ fontSize: 14 }}>
             <strong>{name} Budget</strong>
-            <span>
-              ${spent.toFixed(0)} / ${limit.toFixed(0)}
-            </span>
+            <span>${spent.toFixed(0)} / ${limit.toFixed(0)}</span>
           </div>
 
           <div style={{ marginTop: 8 }}>
-    <label style={{ fontSize: 13, color: 'var(--muted)' }}>
-      Adjust Weekly Limit:
-    </label>
-    <input
-      type="number"
-      value={limit}
-      min="0"
-      onChange={(e) => {
-        const newLimit = Number(e.target.value)
-        setState(prev => ({
-          ...prev,
-          budgets: {
-            ...prev.budgets,
-            [name]: { ...prev.budgets[name], limit: newLimit }
-          }
-        }))
-      }}
-      style={{
-        marginLeft: 8,
-        padding: '4px 8px',
-        borderRadius: 6,
-        border: '1px solid var(--border)',
-        width: 100,
-      }}
-    />
-  </div>
-
-          <div className="progress" style={{ height: 10 }}>
-            <div
+            <label style={{ fontSize: 13, color: 'var(--muted)' }}>Adjust Weekly Limit:</label>
+            <input
+              type="number"
+              value={limit}
+              min="0"
+              onChange={(e) => {
+                const newLimit = Number(e.target.value)
+                setState(prev => ({
+                  ...prev,
+                  budgets: {
+                    ...prev.budgets,
+                    [name]: { ...prev.budgets[name], limit: newLimit }
+                  }
+                }))
+              }}
               style={{
-                width: pct + '%',
-                background: statusColor,
+                marginLeft: 8,
+                padding: '4px 8px',
+                borderRadius: 6,
+                border: '1px solid var(--border)',
+                width: 100,
               }}
             />
+          </div>
+
+          {/* colored progress bar */}
+          <div
+            className={`progress ${barClass}`}
+            style={{ height: 10, marginTop: 8 }}
+            role="progressbar"
+            aria-label={`${name} budget usage`}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+          >
+            <div className="bar" style={{ width: `${pct}%` }} />
           </div>
 
           <div
@@ -154,22 +138,13 @@ export default function CategoryDetail() {
         </div>
 
         {/* Transactions List */}
-        <div
-          className="card"
-          style={{ border: '1px solid var(--border)', marginBottom: 16 }}
-        >
+        <div className="card" style={{ border: '1px solid var(--border)', marginBottom: 16 }}>
           <div className="h" style={{ fontSize: 14, marginBottom: 8 }}>
             Recent {name} Activity
           </div>
 
           {relatedTxns.length === 0 ? (
-            <div
-              style={{
-                fontSize: 13,
-                color: 'var(--muted)',
-                fontStyle: 'italic',
-              }}
-            >
+            <div style={{ fontSize: 13, color: 'var(--muted)', fontStyle: 'italic' }}>
               No recent transactions logged for {name}.
             </div>
           ) : (
@@ -185,43 +160,22 @@ export default function CategoryDetail() {
                   }}
                 >
                   <div>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        color: 'var(--text)',
-                      }}
-                    >
+                    <div style={{ fontWeight: 600, color: 'var(--text)' }}>
                       {txn.merchant || 'Merchant'}
                     </div>
-                    <div
-                      style={{
-                        color: 'var(--muted)',
-                        fontSize: 12,
-                        marginTop: 2,
-                      }}
-                    >
+                    <div style={{ color: 'var(--muted)', fontSize: 12, marginTop: 2 }}>
                       {txn.date || '—'}
                     </div>
                   </div>
-                  <div style={{ fontWeight: 600 }}>
-                    ${txn.amount.toFixed(2)}
-                  </div>
+                  <div style={{ fontWeight: 600 }}>${txn.amount.toFixed(2)}</div>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Future controls */}
-        <div
-          className="footer"
-          style={{
-            fontSize: 12,
-            color: 'var(--muted)',
-          }}
-        >
-          Coming soon: edit limit, pause spending alerts, or set goals just
-          for {name}.
+        <div className="footer" style={{ fontSize: 12, color: 'var(--muted)' }}>
+          Coming soon: edit limit, pause spending alerts, or set goals just for {name}.
         </div>
       </div>
     </div>

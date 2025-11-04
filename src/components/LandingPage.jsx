@@ -24,7 +24,6 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Read Milestone 2
               </a>
             </div>
 

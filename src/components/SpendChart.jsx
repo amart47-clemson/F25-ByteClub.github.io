@@ -1,6 +1,17 @@
 import React, { useContext } from 'react'
 import { AppContext } from '../App.jsx'
 
+function getPct(spent, limit) {
+  if (!limit || limit === 0) return 0
+  return (spent / limit) * 100
+}
+
+function statusClass(pct) {
+  if (pct > 100) return 'danger'   //  red
+  if (pct >= 75) return 'warn'     //  yellow
+  return 'ok'                      //  green
+}
+
 export default function SpendChart() {
   const { state } = useContext(AppContext)
 
@@ -11,7 +22,7 @@ export default function SpendChart() {
       name,
       spent: data.spent,
       limit: data.limit,
-      pct: Math.min(pct, 100) 
+      pct 
     }
   })
 

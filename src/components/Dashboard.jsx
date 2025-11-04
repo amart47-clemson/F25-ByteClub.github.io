@@ -8,6 +8,12 @@ function ratio(spent, limit) {
   return spent / limit
 }
 
+function statusClass(pct) {
+  if (pct >= 90) return 'danger'   // Red 
+  if (pct >= 75) return 'warn'     // Yellow 
+  return 'ok'                      // Green 
+}
+
 export default function Dashboard() {
   const { state } = useContext(AppContext) || {}
   const navigate = useNavigate()
@@ -56,8 +62,8 @@ export default function Dashboard() {
                 </span>
               </div>
 
-              <div className="progress">
-                <div style={{ width: `${pct}%` }} />
+              <div className={`progress ${statusClass(pct)}`}>
+                <div className="bar" style={{ width: `${pct}%` }} />
               </div>
             </div>
           )

@@ -59,7 +59,7 @@ export default function AddExpense() {
     // reset form
     setAmount('')
     setDescription('')
-    navigate('/')
+    navigate('/frame')
   }
 
   return (
@@ -68,7 +68,7 @@ export default function AddExpense() {
         <button
           className="btn"
           style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/frame')}
         >
           ← Back to Dashboard
         </button>

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 export default function LandingPage() {
   return (
     <div className="landing-root">
-      {/* HERO / INTRO */}
+      {/* INTRO */}
       <section className="hero">
         <div className="hero-inner">
           <div className="hero-text">
@@ -15,7 +15,7 @@ export default function LandingPage() {
             </p>
 
             <div className="hero-actions">
-              <NavLink to="/prototype" className="primary-btn">
+              <NavLink to="/frame" className="primary-btn">
                 View Interactive Prototype →
               </NavLink>
               <a

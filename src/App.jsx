@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
+import { Routes, Route, NavLink, useLocation, Navigate } from 'react-router-dom'
 
 // screens
 import LandingPage from './components/LandingPage.jsx'
@@ -12,6 +12,9 @@ import QRSection from './QRSection.jsx'
 
 // hook
 import useLocalState from './hooks/useLocalState.js'
+
+// single source of truth for prototype root
+const DASH = '/frame'
 
 // global app context
 export const AppContext = React.createContext(null)
@@ -26,7 +29,7 @@ export default function App() {
       Transport: { limit: 100, spent: 60 },
       'Fun Money': { limit: 80, spent: 45 },
     },
-    savings: { goal: 5000, saved: 3000 },
+    savings: { goal: 5000, saved: 2500 },
     lastSync: Date.now(),
     transactions: [],
   })
@@ -67,12 +70,12 @@ export default function App() {
 
   const location = useLocation()
   const path = location.pathname
-  const inPrototype = path === '/frame' || path.startsWith('/frame/')
-  const showQR = path === '/frame'
+  const inPrototype = path === DASH || path.startsWith(`${DASH}/`)
+  const showQR = path === DASH
 
   return (
     <AppContext.Provider value={value}>
-      {/* NAVIGATION BAR */}
+      {/* Navigation Bar */}
       <div
         className="navbar"
         style={{
@@ -93,16 +96,16 @@ export default function App() {
 
         {inPrototype && (
           <>
-            <NavLink to="/frame" style={{ textDecoration: 'none', color: 'var(--text)' }}>
+            <NavLink to={DASH} style={{ textDecoration: 'none', color: 'var(--text)' }}>
               Dashboard
             </NavLink>
-            <NavLink to="/frame/savings" style={{ textDecoration: 'none', color: 'var(--text)' }}>
+            <NavLink to={`${DASH}/savings`} style={{ textDecoration: 'none', color: 'var(--text)' }}>
               Savings & Goals
             </NavLink>
-            <NavLink to="/frame/add" style={{ textDecoration: 'none', color: 'var(--text)' }}>
+            <NavLink to={`${DASH}/add`} style={{ textDecoration: 'none', color: 'var(--text)' }}>
               Add Expense
             </NavLink>
-            <NavLink to="/frame/privacy" style={{ textDecoration: 'none', color: 'var(--text)' }}>
+            <NavLink to={`${DASH}/privacy`} style={{ textDecoration: 'none', color: 'var(--text)' }}>
               Privacy
             </NavLink>
           </>
@@ -127,7 +130,7 @@ export default function App() {
             </NavLink>
           ) : (
             <NavLink
-              to="/frame"
+              to={DASH}
               style={{
                 border: '1px solid var(--border)',
                 borderRadius: '8px',
@@ -145,15 +148,28 @@ export default function App() {
         </div>
       </div>
 
-      {/* ROUTING */}
+      {/* Routing */}
       <div className="container">
         <Routes>
+          {/* Public overview */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/frame" element={<Dashboard />} />
-          <Route path="/frame/category/:name" element={<CategoryDetail />} />
-          <Route path="/frame/savings" element={<SavingsGoal />} />
-          <Route path="/frame/add" element={<AddExpense />} />
-          <Route path="/frame/privacy" element={<PrivacySettings />} />
+
+          {/* redirects to keep old links working */}
+          <Route path="/category/:name" element={<Navigate to={`${DASH}/category/:name`} replace />} />
+          <Route path="/savings"        element={<Navigate to={`${DASH}/savings`} replace />} />
+          <Route path="/add"            element={<Navigate to={`${DASH}/add`} replace />} />
+          <Route path="/privacy"        element={<Navigate to={`${DASH}/privacy`} replace />} />
+
+          {/* Prototype routes */}
+          <Route path={DASH} element={<Dashboard />} />
+          <Route path={`${DASH}/category/:name`} element={<CategoryDetail />} />
+          <Route path={`${DASH}/savings`} element={<SavingsGoal />} />
+          <Route path={`${DASH}/add`} element={<AddExpense />} />
+          <Route path={`${DASH}/privacy`} element={<PrivacySettings />} />
+          <Route
+            path="*"
+            element={<Navigate to={path.startsWith(DASH) ? DASH : '/'} replace />}
+          />
         </Routes>
 
         {showQR && <QRSection />}

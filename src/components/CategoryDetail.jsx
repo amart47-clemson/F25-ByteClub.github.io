@@ -30,7 +30,7 @@ export default function CategoryDetail() {
         <div className="card" style={{ maxWidth: 600 }}>
           <button
             className="btn"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/frame')}
             style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
           >
             ← Back to Dashboard
@@ -60,7 +60,7 @@ export default function CategoryDetail() {
       <div className="card" style={{ maxWidth: 800, marginBottom: 24 }}>
         <button
           className="btn"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/frame')}
           style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
         >
           ← Back to Dashboard

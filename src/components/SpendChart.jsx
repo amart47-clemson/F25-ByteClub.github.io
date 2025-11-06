@@ -1,21 +1,10 @@
 import React, { useContext } from 'react'
 import { AppContext } from '../App.jsx'
 
-function getPct(spent, limit) {
-  if (!limit || limit === 0) return 0
-  return (spent / limit) * 100
-}
-
-function statusClass(pct) {
-  if (pct > 100) return 'danger'   //  red
-  if (pct >= 75) return 'warn'     //  yellow
-  return 'ok'                      //  green
-}
-
 export default function SpendChart() {
   const { state } = useContext(AppContext)
+  const privacy = state?.privacy || false
 
-  // Turn budgets object into an array we can map over
   const rows = Object.entries(state.budgets).map(([name, data]) => {
     const pct = data.limit === 0 ? 0 : (data.spent / data.limit) * 100
     return {
@@ -32,8 +21,9 @@ export default function SpendChart() {
         <div key={row.name} className="spend-row">
           <div className="spend-row-header">
             <span className="spend-name">{row.name}</span>
+
             <span className="spend-amt">
-              ${row.spent} / ${row.limit}
+              {privacy ? 'Hidden' : `$${row.spent} / $${row.limit}`}
             </span>
           </div>
 
@@ -50,9 +40,10 @@ export default function SpendChart() {
           </div>
 
           <div className="spend-bar-label">
-            {Math.round(row.pct)}%
+            {privacy ? '' : Math.round(row.pct) + '%'}
             {row.pct > 100 ? ' (over)' : ''}
           </div>
+
         </div>
       ))}
     </div>

@@ -166,7 +166,6 @@ export default function LandingPage() {
 
           <p className="footnote">
             Instructor: Dr. Plaue · This project incorporates feedback from Studio 2
-            and will be evaluated with real users in Studio 3 / Milestone 4.
           </p>
         </div>
       </section>

@@ -35,19 +35,19 @@ export default function SavingsGoal() {
   return (
     <div className="grid">
       <div className="card" style={{ gridColumn: 'span 8' }}>
-        <h2 className="h">Savings Goal — Vacation Fund</h2>
+        <h2 className="h" style={{ marginBottom: 24 }}>Savings Goal — Vacation Fund</h2>
 
         {/* Colored progress bar */}
-        <div className={`progress ${status}`} style={{ margin: '12px 0', height: 12 }}>
+        <div className={`progress ${status}`} style={{ marginBottom: 16, height: 14 }}>
           <div className="bar" style={{ width: `${pct}%` }} />
         </div>
 
-        <div style={{ display:'flex', alignItems:'baseline', gap:8 }}>
-          <strong>{pct}% complete</strong>
-          <span>— ${saved.toFixed(0)} / ${goal.toFixed(0)}</span>
+        <div style={{ display:'flex', alignItems:'baseline', gap:12, marginBottom: 24, flexWrap: 'wrap' }}>
+          <strong style={{ fontSize: 16 }}>{pct}% complete</strong>
+          <span style={{ fontSize: 15, color: 'var(--text)' }}>— ${saved.toFixed(0)} / ${goal.toFixed(0)}</span>
 
           {/* Show over or remaining amount */}
-          <span style={{ marginLeft:'auto', color:'var(--muted)', fontSize:13 }}>
+          <span style={{ marginLeft:'auto', color:'var(--muted)', fontSize:14, fontWeight: 500 }}>
             {remaining >= 0
               ? `$${remaining.toFixed(0)} left`
               : `Over by $${Math.abs(remaining).toFixed(0)}`}
@@ -55,26 +55,30 @@ export default function SavingsGoal() {
         </div>
 
         {/* Add savings buttons */}
-        <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-          <button className="btn" onClick={() => add(50)}>+ $50</button>
-          <button className="btn" onClick={() => add(100)}>+ $100</button>
-          <button className="btn" onClick={() => add(250)}>+ $250</button>
+        <div style={{ marginBottom: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <button className="btn" onClick={() => add(50)} style={{ minWidth: 100 }}>+ $50</button>
+          <button className="btn" onClick={() => add(100)} style={{ minWidth: 100 }}>+ $100</button>
+          <button className="btn" onClick={() => add(250)} style={{ minWidth: 100 }}>+ $250</button>
         </div>
 
-        <div className="card" style={{ marginTop: 16 }}>
-          <div className="badge">Goal Timeline (Placeholder)</div>
+        <div className="card" style={{ marginTop: 24, padding: '16px 20px' }}>
+          <div className="badge" style={{ fontSize: 13 }}>Goal Timeline (Placeholder)</div>
         </div>
       </div>
 
       {/* Recent contributions */}
       <div className="card" style={{ gridColumn: 'span 4' }}>
-        <h3 className="h">Recent Contributions</h3>
-        <div className="card">
-          <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #eee' }}>
-            <div>Auto-transfer</div><div>10/10</div><div>$250</div>
+        <h3 className="h2" style={{ marginBottom: 20 }}>Recent Contributions</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems: 'center', padding:'12px 0', borderBottom:'1px solid var(--border)', fontSize: 14 }}>
+            <div style={{ fontWeight: 500 }}>Auto-transfer</div>
+            <div style={{ color: 'var(--muted)', fontSize: 13 }}>10/10</div>
+            <div style={{ fontWeight: 600 }}>$250</div>
           </div>
-          <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #eee' }}>
-            <div>Manual deposit</div><div>10/05</div><div>$100</div>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems: 'center', padding:'12px 0', fontSize: 14 }}>
+            <div style={{ fontWeight: 500 }}>Manual deposit</div>
+            <div style={{ color: 'var(--muted)', fontSize: 13 }}>10/05</div>
+            <div style={{ fontWeight: 600 }}>$100</div>
           </div>
         </div>
       </div>

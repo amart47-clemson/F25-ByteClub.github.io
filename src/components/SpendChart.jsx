@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { AppContext } from '../App.jsx'
+import { getCategoryIcon } from '../utils/categoryIcons.js'
 
 export default function SpendChart() {
   const { state } = useContext(AppContext)
@@ -20,7 +21,10 @@ export default function SpendChart() {
       {rows.map(row => (
         <div key={row.name} className="spend-row">
           <div className="spend-row-header">
-            <span className="spend-name">{row.name}</span>
+            <span className="spend-name" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>{getCategoryIcon(row.name)}</span>
+              {row.name}
+            </span>
 
             <span className="spend-amt">
               {privacy ? 'Hidden' : `$${row.spent} / $${row.limit}`}

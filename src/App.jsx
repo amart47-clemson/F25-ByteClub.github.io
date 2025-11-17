@@ -8,7 +8,6 @@ import CategoryDetail from './components/CategoryDetail.jsx'
 import SavingsGoal from './components/SavingsGoal.jsx'
 import AddExpense from './components/AddExpense.jsx'
 import PrivacySettings from './components/PrivacySettings.jsx'
-import QRSection from './QRSection.jsx'
 
 // hook
 import useLocalState from './hooks/useLocalState.js'
@@ -71,25 +70,11 @@ export default function App() {
   const location = useLocation()
   const path = location.pathname
   const inPrototype = path === DASH || path.startsWith(`${DASH}/`)
-  const showQR = path === DASH
 
   return (
     <AppContext.Provider value={value}>
       {/* Navigation Bar */}
-      <div
-        className="navbar"
-        style={{
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'center',
-          padding: '12px 16px',
-          borderBottom: '1px solid var(--border)',
-          background: 'var(--card)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 10,
-        }}
-      >
+      <div className="navbar">
         <NavLink to="/" style={{ textDecoration: 'none', color: 'var(--text)' }}>
           Overview
         </NavLink>
@@ -171,8 +156,6 @@ export default function App() {
             element={<Navigate to={path.startsWith(DASH) ? DASH : '/'} replace />}
           />
         </Routes>
-
-        {showQR && <QRSection />}
       </div>
     </AppContext.Provider>
   )

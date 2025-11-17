@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../App.jsx'
+import { getCategoryIcon } from '../utils/categoryIcons.js'
 
 export default function AddExpense() {
   const navigate = useNavigate()
@@ -63,31 +64,33 @@ export default function AddExpense() {
   }
 
   return (
-    <div className="container" style={{ paddingTop: 24, maxWidth: 480 }}>
+    <div className="container" style={{ paddingTop: 24, maxWidth: 520 }}>
       <div className="card" style={{ border: '1px solid var(--border)' }}>
         <button
           className="btn"
-          style={{ fontSize: 14, marginBottom: 16, background: '#fff' }}
+          style={{ fontSize: 14, marginBottom: 20, background: '#fff' }}
           onClick={() => navigate('/frame')}
         >
           ← Back to Dashboard
         </button>
 
-        <h2 className="h" style={{ marginBottom: 8 }}>
+        <h2 className="h" style={{ marginBottom: 10 }}>
           Add Expense
         </h2>
-        <div style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 20 }}>
+        <div style={{ fontSize: 15, color: 'var(--muted)', marginBottom: 24, lineHeight: 1.5 }}>
           Log something you (or a roommate / family member) just spent. This updates the shared budget.
         </div>
 
         <form onSubmit={handleSubmit} style={{ fontSize: 14, color: 'var(--text)' }}>
           {/* Amount */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 24 }}>
             <label
               style={{
                 display: 'block',
                 fontWeight: 600,
-                marginBottom: 6,
+                marginBottom: 8,
+                fontSize: 14,
+                color: 'var(--text)',
               }}
             >
               Amount ($)
@@ -101,23 +104,28 @@ export default function AddExpense() {
               required
               style={{
                 width: '100%',
-                padding: '10px 12px',
+                padding: '12px 16px',
                 borderRadius: 8,
                 border: '1px solid var(--border)',
                 background: '#fff',
-                fontSize: 14,
+                fontSize: 15,
+                transition: 'border-color 0.2s ease',
               }}
               placeholder="e.g. 42.50"
+              onFocus={(e) => e.target.style.borderColor = '#9ca3af'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
             />
           </div>
 
           {/* Category */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 24 }}>
             <label
               style={{
                 display: 'block',
                 fontWeight: 600,
-                marginBottom: 6,
+                marginBottom: 8,
+                fontSize: 14,
+                color: 'var(--text)',
               }}
             >
               Category
@@ -127,28 +135,34 @@ export default function AddExpense() {
               onChange={e => setCategory(e.target.value)}
               style={{
                 width: '100%',
-                padding: '10px 12px',
+                padding: '12px 16px',
                 borderRadius: 8,
                 border: '1px solid var(--border)',
                 background: '#fff',
-                fontSize: 14,
+                fontSize: 15,
+                cursor: 'pointer',
+                transition: 'border-color 0.2s ease',
               }}
+              onFocus={(e) => e.target.style.borderColor = '#9ca3af'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
             >
               {Object.keys(state.budgets).map(cat => (
                 <option key={cat} value={cat}>
-                  {cat}
+                  {getCategoryIcon(cat)} {cat}
                 </option>
               ))}
             </select>
           </div>
 
           {/* Description / Merchant (NEW FIELD) */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 24 }}>
             <label
               style={{
                 display: 'block',
                 fontWeight: 600,
-                marginBottom: 6,
+                marginBottom: 8,
+                fontSize: 14,
+                color: 'var(--text)',
               }}
             >
               Description / Where was this?
@@ -160,25 +174,30 @@ export default function AddExpense() {
               placeholder="ex: Publix groceries, Uber to airport, dinner at Thai Place"
               style={{
                 width: '100%',
-                padding: '10px 12px',
+                padding: '12px 16px',
                 borderRadius: 8,
                 border: '1px solid var(--border)',
                 background: '#fff',
-                fontSize: 14,
+                fontSize: 15,
+                transition: 'border-color 0.2s ease',
               }}
+              onFocus={(e) => e.target.style.borderColor = '#9ca3af'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
             />
-            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
-              This will show up in your category view under “Recent Activity”.
+            <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 6, lineHeight: 1.4 }}>
+              This will show up in your category view under "Recent Activity".
             </div>
           </div>
 
           {/* Date */}
-          <div style={{ marginBottom: 20 }}>
+          <div style={{ marginBottom: 24 }}>
             <label
               style={{
                 display: 'block',
                 fontWeight: 600,
-                marginBottom: 6,
+                marginBottom: 8,
+                fontSize: 14,
+                color: 'var(--text)',
               }}
             >
               Date
@@ -189,12 +208,16 @@ export default function AddExpense() {
               onChange={e => setDate(e.target.value)}
               style={{
                 width: '100%',
-                padding: '10px 12px',
+                padding: '12px 16px',
                 borderRadius: 8,
                 border: '1px solid var(--border)',
                 background: '#fff',
-                fontSize: 14,
+                fontSize: 15,
+                cursor: 'pointer',
+                transition: 'border-color 0.2s ease',
               }}
+              onFocus={(e) => e.target.style.borderColor = '#9ca3af'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
             />
           </div>
 
@@ -209,9 +232,20 @@ export default function AddExpense() {
               fontWeight: 600,
               border: 'none',
               borderRadius: 8,
-              padding: '12px 16px',
+              padding: '14px 20px',
               fontSize: 15,
               cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1f2937'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--accent)'
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = 'none'
             }}
           >
             Add to Budget
@@ -221,12 +255,13 @@ export default function AddExpense() {
         <div
           className="footer"
           style={{
-            marginTop: 16,
-            fontSize: 12,
+            marginTop: 24,
+            fontSize: 13,
             color: 'var(--muted)',
+            lineHeight: 1.5,
           }}
         >
-          This simulates a “manual log.” In the real system, most expenses would auto-import from the bank.
+          This simulates a "manual log." In the real system, most expenses would auto-import from the bank.
         </div>
       </div>
     </div>
